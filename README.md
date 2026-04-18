@@ -70,6 +70,13 @@ docker compose logs -f
 
 The service binds only to `127.0.0.1:8787`.
 
+## Alerts
+
+If `DISCORD_WEBHOOK_URL` is set, the daemon posts refresh failures to that Discord channel.
+
+- `invalid_grant` alerts immediately because re-authorization is required.
+- transient network or HTTP failures alert after 3 consecutive failures.
+
 ## Development
 
 ```bash

@@ -27,7 +27,7 @@ describe("Refresher", () => {
       refreshThresholdMinutes: 120,
       refreshIntervalHours: 12,
       localBearerToken: "",
-      slackWebhookUrl: "",
+      discordWebhookUrl: "",
     };
   });
 

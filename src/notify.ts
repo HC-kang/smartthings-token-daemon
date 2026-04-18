@@ -1,13 +1,18 @@
 import type { Config } from "./config.ts";
 import type { TokenError } from "./types.ts";
 
-export function buildNotifier(config: Config) {
+type FetchLike = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
+
+export function buildNotifier(
+  config: Config,
+  fetchImpl: FetchLike = fetch,
+) {
   return async (error: TokenError, consecutive: number) => {
     console.error(
       `[notify] refresh failed (#${consecutive}): ${error.kind} - ${error.message}`,
     );
 
-    if (!config.slackWebhookUrl) {
+    if (!config.discordWebhookUrl) {
       return;
     }
 
@@ -22,17 +27,21 @@ export function buildNotifier(config: Config) {
         : "Check container logs and network reachability.";
 
     try {
-      await fetch(config.slackWebhookUrl, {
+      await fetchImpl(config.discordWebhookUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          text: `[${severity}] smartthings-token-daemon refresh failure (${consecutive})\n${error.kind}: ${error.message}\n${hint}`,
+          content: [
+            `[${severity}] smartthings-token-daemon refresh failure (${consecutive})`,
+            `${error.kind}: ${error.message}`,
+            hint,
+          ].join("\n"),
         }),
       });
     } catch (notifyError) {
-      console.error("[notify] slack post failed:", notifyError);
+      console.error("[notify] discord webhook post failed:", notifyError);
     }
   };
 }

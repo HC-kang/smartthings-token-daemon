@@ -8,7 +8,7 @@ export interface Config {
   refreshThresholdMinutes: number;
   refreshIntervalHours: number;
   localBearerToken: string;
-  slackWebhookUrl: string;
+  discordWebhookUrl: string;
 }
 
 function required(name: string): string {
@@ -48,6 +48,6 @@ export function loadConfig(): Config {
     refreshThresholdMinutes: numberEnv("REFRESH_THRESHOLD_MINUTES", 120),
     refreshIntervalHours: numberEnv("REFRESH_INTERVAL_HOURS", 12),
     localBearerToken: optional("LOCAL_BEARER_TOKEN", ""),
-    slackWebhookUrl: optional("SLACK_WEBHOOK_URL", ""),
+    discordWebhookUrl: optional("DISCORD_WEBHOOK_URL", ""),
   };
 }
