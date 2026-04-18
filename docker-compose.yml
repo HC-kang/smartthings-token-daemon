@@ -1,0 +1,29 @@
+services:
+  smartthings-token:
+    build: .
+    image: smartthings-token-daemon:local
+    container_name: smartthings-token
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8787:8787"
+    volumes:
+      - ./data:/app/data
+    environment:
+      SMARTTHINGS_CLIENT_ID: ${SMARTTHINGS_CLIENT_ID}
+      SMARTTHINGS_CLIENT_SECRET: ${SMARTTHINGS_CLIENT_SECRET}
+      REFRESH_INTERVAL_HOURS: ${REFRESH_INTERVAL_HOURS:-12}
+      REFRESH_THRESHOLD_MINUTES: ${REFRESH_THRESHOLD_MINUTES:-120}
+      LOCAL_BEARER_TOKEN: ${LOCAL_BEARER_TOKEN:-}
+      SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL:-}
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
